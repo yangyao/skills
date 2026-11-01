@@ -1,29 +1,41 @@
-# skills
+# 我的 Skills
 
-給 agent 使用的個人工作流程。內容以實際使用經驗整理，避免換裝置、加 App 時重複踩坑。
+把亲手解决过的问题，整理成 Agent 下次可以直接用的方法。
 
-| Skill | 用途 |
-| --- | --- |
-| [ios-home-sideload](ios-home-sideload/SKILL.md) | Mac AltServer + AltStore Classic + LiveContainer：換手機、加自製 App、保留存檔、Wi-Fi 續簽與官方直啟捷徑 |
+这里是 Yangyao 的个人 Skills 集合，分享我在开发和日常使用中积累的工作流程。有些来自一个小工具，有些来自一次反复排查：我把有效的步骤、可复用的脚本，以及容易走错的地方，一起留下来。
 
-## 使用
+你可以挑一个需要的 skill，交给自己的 Agent 使用。
 
-把本倉庫交給 agent，請它先讀對應 `SKILL.md`，或把 skill 資料夾安裝到 agent 的 skills 目錄。
+## Skills 索引
 
-Codex 範例：
+| Skill | 一句话介绍 | 分类 |
+| --- | --- | --- |
+| [家庭 iOS App 管家](ios-home-sideload/README.md) | 把自制 App 带到家人的 iPhone 和 iPad 上，让安装、数据迁移和续签有章可循。 | 设备 · 自制应用 |
+
+每个 skill 都有两个入口：**README.md 面向使用者**，介绍它能做什么、适合谁；**SKILL.md 面向 Agent**，提供执行流程和必要约束。
+
+## 怎么使用
+
+浏览索引，找到适合当前任务的 skill。把它的介绍页或仓库链接交给 Agent，让 Agent 先阅读对应的 `SKILL.md`，再根据你的环境执行。
+
+也可以先克隆仓库：
 
 ```sh
 git clone https://github.com/yangyao/skills.git
-mkdir -p ~/.codex/skills
-ln -s "$(pwd)/skills/ios-home-sideload" ~/.codex/skills/ios-home-sideload
 ```
 
-若本機已存在同名 skill，先比較內容，不直接覆蓋。新工作階段可以使用：
+将需要的 skill 目录安装或链接到所用 Agent 的技能目录。例如，Codex 使用 `~/.codex/skills/`。如果已有同名 skill，先比较内容，再决定如何更新。
 
-> 使用 $ios-home-sideload，將我的自製 App 接入另一台 iPhone，保留存檔、設定無線刷新和直啟捷徑。
+安装后，可以直接对 Agent 说：
 
-技能只攜帶流程，不攜帶任何人的 Apple 帳號、裝置識別碼、憑證、配對記錄、App 存檔或 IPA。Agent 必須在每次任務取得當下裝置資料。沒有 GitHub Actions 或自動發佈。
+> 使用这个 skill，帮我完成这项任务。先确认当前环境，沿用已经完成的设置。
 
-## 已知取捨
+## 这里会保留什么
 
-官方 Launch App 捷徑已實測能避免 Safari 入口，但原 App 圖示與「加入主畫面」仍有手機手動確認步驟。不要把「可產生捷徑檔」誤稱為全自動安裝桌面原圖示。
+- **经过实践的方法**：说明适用条件，也说明哪些结果真正验证过。
+- **值得复用的工具**：把重复操作写成脚本，减少下一次从头摸索。
+- **踩过的坑**：保留关键判断和替代路径，让 Agent 少让人重复操作。
+
+这些流程来自个人使用，会随着实际反馈继续修正。系统和工具会变化，Agent 应核对当前环境，而不是机械照搬旧步骤。
+
+仓库不包含个人账号、密钥、设备配对记录或业务数据。技能负责分享方法，实际操作所需的信息留在使用者自己的环境中。
