@@ -33,7 +33,7 @@ description: Set up or maintain self-developed iPhone/iPad apps using AltStore C
 
 ## 完成標準
 
-目標 guest 能執行、存檔核對正常、拔 USB 後 Refresh All 成功、刷新後資料保留，桌面捷徑實測使用官方 Launch App。未驗證部分明確列出，不用另一台裝置的成功代替目標驗證。
+目標 guest 完成首次清單啟動、存檔核對正常、Finder Wi-Fi 設定讀回已啟用、拔 USB 後 Refresh All 成功、刷新後資料保留，桌面捷徑實測使用官方 Launch App，並提供清楚名稱與原圖下載。未驗證部分明確列出，不用另一台裝置的成功代替目標驗證。AltStore 下載逾時先走官方 IPA 本地安裝分支，不重跑全部設定。
 
 ## 公開邊界
 

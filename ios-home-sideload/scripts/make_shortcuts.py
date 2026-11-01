@@ -9,8 +9,9 @@ import re
 import shutil
 import subprocess
 import tempfile
-from urllib.parse import urlencode
+from urllib.parse import quote, urlencode
 import uuid
+import unicodedata
 
 
 def require_string(obj, key):
@@ -35,12 +36,24 @@ def generate(config, output, sign=False):
         raise ValueError("Apple shortcuts CLI not found; sign on a Mac")
     planned = []
     slugs = set()
+    filenames = set()
     for app in apps:
         slug = require_string(app, "slug")
         if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", slug) or slug in slugs:
             raise ValueError("Use unique lowercase filename-safe slugs")
         slugs.add(slug)
         name = require_string(app, "name")
+        if any(c in name for c in '/\\:') or any(ord(c) < 32 for c in name) or len(name.encode("utf-8")) > 220:
+            raise ValueError("App display name is not a safe download filename")
+        filename = unicodedata.normalize("NFC", name).casefold()
+        if filename in filenames:
+            raise ValueError("App names must be unique for download filenames")
+        filenames.add(filename)
+        icon = None
+        if app.get("icon_path"):
+            icon = Path(require_string(app, "icon_path")).expanduser().resolve()
+            if not icon.read_bytes().startswith(b"\x89PNG\r\n\x1a\n"):
+                raise ValueError("icon_path must contain an original PNG image")
         folder = require_string(app, "bundle_folder")
         if "/" in folder or "\\" in folder or not folder.endswith(".app"):
             raise ValueError("bundle_folder must be the installed guest .app folder name")
@@ -62,18 +75,18 @@ def generate(config, output, sign=False):
                 },
             }],
         }
-        planned.append((slug, name, workflow))
-    if any((output / f"{slug}.shortcut").exists() for slug, _, _ in planned) or (output / "index.html").exists():
+        planned.append((slug, name, workflow, icon))
+    if any((output / f"{name}{suffix}").exists() for _, name, _, _ in planned for suffix in (".shortcut", ".png")) or (output / "index.html").exists():
         raise ValueError("Output files exist; use a fresh output directory")
     output.mkdir(parents=True, exist_ok=True)
     # Validate all metadata before creating files. Never put credential data in config.
     created = []
     try:
         with tempfile.TemporaryDirectory(prefix="lc-shortcuts-") as temp:
-            for slug, name, workflow in planned:
+            for slug, name, workflow, icon in planned:
                 raw = Path(temp) / f"{slug}.shortcut"
                 raw.write_bytes(plistlib.dumps(workflow, fmt=plistlib.FMT_BINARY))
-                target = output / raw.name
+                target = output / f"{name}.shortcut"
                 created.append(target)
                 if sign:
                     subprocess.run(["shortcuts", "sign", "--mode", "anyone", "--input", str(raw), "--output", str(target)],
@@ -82,12 +95,29 @@ def generate(config, output, sign=False):
                     shutil.copyfile(raw, target)
                 if not target.is_file() or target.stat().st_size == 0:
                     raise ValueError("Shortcut generation produced an empty file")
-        links = "".join(f'<a href="{slug}.shortcut">加入 {html.escape(name)}</a>' for slug, name, _ in planned)
+                if icon:
+                    image = output / f"{name}.png"
+                    created.append(image)
+                    shutil.copyfile(icon, image)
+        cards = []
+        for _, name, _, icon in planned:
+            label = html.escape(name)
+            shortcut_name = quote(f"{name}.shortcut", safe="")
+            picture = ""
+            if icon:
+                image_name = quote(f"{name}.png", safe="")
+                picture = (f'<img src="{image_name}" alt="{label}">'
+                           f'<a href="{image_name}" download="{label}.png">下載原始 App 圖示</a>')
+            cards.append(f'<section><h2>{label}</h2>{picture}'
+                         f'<a href="{shortcut_name}" download="{label}.shortcut">下載「{label}」捷徑</a></section>')
+        links = "".join(cards)
         notice = "下載後打開檔案，確認加入捷徑。先測試一個。" if sign else "未簽署測試檔，請在 Mac 使用 --sign 重新產生後再匯入手機。"
         page = ('<!doctype html><html lang="zh-Hant"><meta charset="utf-8">'
                 '<meta name="viewport" content="width=device-width,initial-scale=1"><title>App 直啟捷徑</title>'
                 '<style>body{font:18px -apple-system,sans-serif;max-width:480px;margin:auto;padding:24px;line-height:1.6}'
-                'a{display:block;padding:20px;margin:16px 0;background:#f3f5f8;border-radius:16px}</style>'
+                'a{display:block;padding:16px;margin:12px 0;background:#edf3fc;border-radius:12px}'
+                'section{padding:20px;margin:20px 0;border:1px solid #ddd;border-radius:20px}'
+                'img{width:96px;height:96px;border-radius:20px}h2{font-size:23px}</style>'
                 f'<h1>App 直啟捷徑</h1><p>{notice}</p>{links}'
                 '<p>加入主畫面與選原圖示，仍需在手機的捷徑分享選單操作一次。</p></html>')
         (output / "index.html").write_text(page, encoding="utf-8")

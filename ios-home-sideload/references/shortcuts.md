@@ -6,7 +6,7 @@
 
 ## 產生檔案
 
-先取得該手機的實際 app folder、LCDataUUID、簽名 team、已安裝啟動擴充 Bundle ID。此次 AltStore 把主 ID 變成 `<original>.<team>`，擴充變成 `<parent>.<team>.<extension>`；不要把此規則當成所有安裝器的保證。
+每個 App 先從 LiveContainer 清單成功啟動，再取得該裝置的實際 app folder、LCDataUUID、簽名 team、已安裝啟動擴充 Bundle ID。**缺 LCDataUUID 就先完成初始化，不省略 UUID 產生一份看似可用的捷徑。** 此次遙控器曾在首次直啟失敗，從清單開啟後恢復。此次 AltStore 把主 ID 變成 `<original>.<team>`，擴充變成 `<parent>.<team>.<extension>`；不要把此規則當成所有安裝器的保證。
 
 從當次官方 IPA 的 `LaunchAppExtension.appex/Metadata.appintents/extract.actionsdata` 核對 Intent 和參數。此次 3.8.0：Intent `LaunchAppExtension`、參數 `launchURL`；官方來源程式需要 ShareExtension。新版本依實際 metadata 更新。
 
@@ -20,7 +20,7 @@
   "parameter_name": "launchURL",
   "scheme": "livecontainer",
   "apps": [
-    {"slug": "my-app", "name": "我的 App", "bundle_folder": "com.example.myapp.app", "container_id": "REPLACE-WITH-ACTUAL-UUID"}
+    {"slug": "my-app", "name": "我的 App", "bundle_folder": "com.example.myapp.app", "container_id": "REPLACE-WITH-ACTUAL-UUID", "icon_path": "/private/path/我的 App.png"}
   ]
 }
 ```
@@ -31,6 +31,8 @@ python3 scripts/make_shortcuts.py --config /private/path/launchers.json \
 ```
 
 `--sign` 呼叫 Mac `shortcuts sign --mode anyone`，這是 Apple 捷徑檔分享簽署，不是替容器簽名，不需要 agent 取得 Apple 密碼。未加此選項只產生原始 plist 用於檢查；現代 iOS 分享匯入用已簽版本。
+
+`name` 使用 App 實際顯示名稱，捷徑與下載檔名一致，別用 learning／remote 等難對應的檔名或額外前綴。`icon_path` 可選，指向倉庫外已取得的原始 PNG；**正式交付時提供原圖**，下載頁同卡片顯示 App 名稱、圖示預覽、捷徑下載及圖片下載，避免讓使用者另外尋找圖片。
 
 腳本生成 index.html；只服務捷徑、圖示等非敏感檔案。先讓手機匯入一個測試，出現官方 Launch App 動作且能執行，再批量匯入其餘。關掉 HTTP 服務後，已匯入的捷徑仍可用。
 

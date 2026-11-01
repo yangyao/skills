@@ -8,13 +8,13 @@
 
 ## 初次操作
 
-1. 目標手機 USB 接 Mac、解鎖、信任。Finder「一般」啟用連 Wi-Fi 時顯示裝置並套用；不要按還原或不必要的媒體同步。
-2. AltServer 選單列選正確手機安裝 AltStore。對照 UDID／型號，不靠名字猜。Apple 登入和2FA 由使用者輸入。
+1. 目標手機 USB 接 Mac、解鎖、信任。Finder「一般」啟用連 Wi-Fi 時顯示裝置並套用；不要按還原或不必要的媒體同步。**Agent 實際核對勾選與套用結果，不把使用者的「好了」當成已啟用的證據。** USB 下可讀 `ideviceinfo -u "$DEVICE_ID" -q com.apple.mobile.wireless_lockdown -k EnableWifiConnections`，應為 `true`；空值不算通過。
+2. AltServer 選單列選正確手機安裝 AltStore。對照 UDID／型號，不靠名字猜。Apple 登入和2FA 由使用者輸入。若官方下載逾時，不連續重試整套安裝：按 [下載逾時處理](troubleshooting.md#altstore-下載逾時) 先取回並驗證官方 IPA，再用本地入口安裝；同一次設定其他裝置時重用這份已核對的檔案。
 3. 手機依需求開開發者模式、信任開發者及本機網路權限，開 AltStore 登入同帳號。
 4. 看 My Apps → View App IDs 的實際餘額，計入主容器與所需擴充。刪 App 不會立即歸還 ID。
 5. AltStore `＋` 匯入 LiveContainer，保留啟動擴充。此次驗證的 3.8.0，Launch App 需要 `LaunchAppExtension` + `ShareExtension`；較新文件的命名可能不同，依包內 metadata／源碼確認。額度不足時再評估裁切，明說失去的功能。
 6. LiveContainer Settings 匯入 AltStore 憑證，JIT-Less Diagnose/Test 通過；密碼只在裝置填。後續真的換憑證時才視需要重匯。
-7. 用無敏感資料的測試 IPA 檢查 guest 執行、計數保存及重開，再搬正式 App。
+7. 用無敏感資料的測試 IPA 檢查 guest 執行、計數保存及重開，再搬正式 App。正式 App **每個都先從 LiveContainer 清單啟動一次**，讀回已建立的資料容器，才製作直啟捷徑；不要用尚未初始化的 guest 測桌面入口。
 
 只缺擴充時，使用同主 Bundle ID 在 AltStore 覆蓋更新、Keep App Extensions；不卸載 LiveContainer。不同主 ID 是另一個 App，不是覆蓋。
 
@@ -41,3 +41,4 @@ guest 在 LiveContainer Apps `＋ → 我的 iPhone → LiveContainer` 匯入；
 - https://faq.altstore.io/altstore-classic/app-ids
 - https://github.com/LiveContainer/LiveContainer/releases
 - https://livecontainer.github.io/docs/guides/add-to-home-screen
+- https://github.com/altstoreio/FAQ/blob/main/release-notes/altserver.md
