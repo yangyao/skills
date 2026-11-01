@@ -1,4 +1,4 @@
 interface:
-  display_name: "iOS 家庭 App 安裝與續簽"
-  short_description: "AltStore、LiveContainer、存檔遷移及原生直啟捷徑的家庭裝置流程"
+  display_name: "自制 App，自由用"
+  short_description: "免费签名，多台自有设备运行多个自制 App，让安装与日常续签更简单"
   default_prompt: "使用 $ios-home-sideload，將我的自製 App 接入另一台 iPhone，保留存檔並設定無線續簽和直啟捷徑。"

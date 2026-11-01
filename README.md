@@ -10,7 +10,7 @@
 
 | Skill | 一句话介绍 | 分类 |
 | --- | --- | --- |
-| [家庭 iOS App 管家](ios-home-sideload/README.md) | 把自制 App 带到家人的 iPhone 和 iPad 上，让安装、数据迁移和续签有章可循。 | 设备 · 自制应用 |
+| [自制 App，自由用](ios-home-sideload/README.md) | 不付开发者年费，在多台自有 iPhone / iPad 上使用多个自制 App，让日常续签更简单。 | 设备 · 自制应用 |
 
 每个 skill 都有两个入口：**README.md 面向使用者**，介绍它能做什么、适合谁；**SKILL.md 面向 Agent**，提供执行流程和必要约束。
 
