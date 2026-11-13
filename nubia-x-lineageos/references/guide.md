@@ -1,6 +1,6 @@
 # Nubia X (NX616J) 刷 LineageOS 22.2 完整操作指南
 
-记录于 2026-11-13。起点：一台已刷第三方 ROM（Android 9，mk_nx616j-userdebug）的 Nubia X；终点：官方 LineageOS 22.2（Android 15，2026-10 安全补丁）+ MindTheGapps + sing-box 代理。
+记录于 2026-11-13。起点：一台已刷第三方 ROM（Android 9，mk_nx616j-userdebug）的 Nubia X；终点：官方 LineageOS 22.2（Android 15，2026-10 安全补丁）+ MindTheGapps。
 
 ## 0. 准备
 
@@ -71,25 +71,6 @@ adb reboot recovery
 4. 返回主菜单 → **Reboot system now**
 
 首次开机 5–15 分钟属正常。WiFi 连接本身不需要代理；只有 Google 登录/Play 商店需要手机自己有代理。
-
-## 7. 安装 sing-box (SFA) 并导入机场订阅
-
-- APK：https://github.com/SagerNet/sing-box/releases （`SFA-<ver>-arm64-v8a.apk`），`adb install SFA.apk`
-- SFA 不识别小火箭二维码/分享链接，需要 sing-box JSON 配置
-- 订阅转换流程：`curl` 订阅 URL → base64 解码 → 得到 `ss://` / `vless://` 链接列表 → 解析参数生成 JSON
-- VLESS+Reality 参数映射：`pbk` → `reality.public_key`；`sid` → `reality.short_id`；`fp` → `utls.fingerprint`；`flow=xtls-rprx-vision`
-- 成品参考：[sfa_config.json](sfa_config.json)（6 节点 + urltest 自动选择 + geosite-cn/geoip-cn 国内直连分流）
-
-### sing-box 1.14 配置语法坑
-
-| 错误写法 | 正确写法 |
-| --- | --- |
-| DNS `"address": "https://8.8.8.8/dns-query"` | `"type": "https", "server": "8.8.8.8"`（旧格式 1.14 已删除） |
-| `{"protocol":"dns","action":"hijack"}` | `"action": "hijack-dns"` |
-| DNS server `"detour"` 指向空 direct 出站 | 去掉 detour（默认直连） |
-| `"independent_cache": true` | 已弃用，直接删掉 |
-
-导入后启动报错时，用 `adb exec-out screencap -p > err.png` 截图看完整错误信息逐条修。
 
 ## 8. 大文件下载经验（国内网络）
 
