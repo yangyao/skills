@@ -1,6 +1,6 @@
 ---
 name: nubia-x-lineageos
-description: 从第三方 Android 9 ROM 把 Nubia X (NX616J) 刷到官方 LineageOS 22.2 (Android 15)，包括解鎖、recovery、sideload、GApps，以及装 sing-box (SFA) 代理并转換机场订阅。适用于刷机中途 recovery 闪退、bootloader 解鎖 flag 重置、adb/fashboot 不可见等故障。
+description: 从第三方 Android 9 ROM 把 Nubia X (NX616J) 刷到官方 LineageOS 22.2 (Android 15)，包括解鎖、recovery、sideload、GApps。适用于刷机中途 recovery 闪退、bootloader 解鎖 flag 重置、adb/fashboot 不可见等故障。
 ---
 
 # Nubia X (NX616J) 刷官方 LineageOS 22.2
@@ -51,19 +51,3 @@ description: 从第三方 Android 9 ROM 把 Nubia X (NX616J) 刷到官方 Lineag
 - LineageOS 官方鏡像直連極慢且頻繁斷（HTTP/2 PROTOCOL_ERROR），單線程 curl + socks5 代理也只有 ~150KB/s。
 - 有效組合：**aria2 不支援 socks5 代理**（會靜默失敗）；用 curl 走代理（`-x socks5h://127.0.0.1:port --http1.1 -C -`）配無限重試循環，或 aria2 走 **HTTP 代理**（`--all-proxy=http://127.0.0.1:port -x16`，若代理端口同時接受 CONNECT）。
 - 一切以 SHA256 對官方值為準，校驗不過絕不刷入。
-
-## SFA (sing-box for Android) 配置 1.14 坑
-
-- 1.14 **刪除了舊 DNS 格式**：DNS server 必須用 `"type": "https", "server": "8.8.8.8"`，不能再寫 `"address": "https://8.8.8.8/dns-query"`。
-- DNS 劫持規則 action 名是 **`hijack-dns`**，不是 `hijack`。
-- **空的 direct 出站不允許被 detour**：DNS server 不要 `detour` 到空 direct；默認就是直連，直接省略。
-- `independent_cache` 已棄用（僅警告，可刪）。
-- 小火箭二維碼/分享鏈接 SFA 不識別；拿**訂閱 URL**，`curl` 下載後 base64 解碼得節點列表（ss://、vless:// 鏈接），解析參數生成 sing-box JSON。VLESS+Reality 的映射：`pbk`→reality.public_key、`sid`→reality.short_id、`fp`→utls.fingerprint、`flow`→xtls-rprx-vision。
-- 參考成品見倉庫 `nubia-x-lineageos/references/sfa_config.json`（含 geosite-cn/geoip-cn 國內直連分流）。
-
-## 工作原則
-
-1. 每一步失敗先截圖/抓日誌（`adb exec-out screencap -p`）再動手，不要猜。
-2. 解鎖、flash、引導三步之間不要插入任何重啟。
-3. 任何刷入的檔案必須先過 SHA256。
-4. 涉及清數據的操作先問使用者確認。
