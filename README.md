@@ -10,6 +10,7 @@
 
 | Skill | 一句话介绍 | 分类 |
 | --- | --- | --- |
+| [Nubia X 刷官方 LineageOS](nubia-x-lineageos/README.md) | 把刷着 Android 9 第三方 ROM 的 Nubia X 刷到官方 LineageOS 22.2 (Android 15)，含解锁坑、recovery 闪退修复和机场订阅转 sing-box。 | 设备 · 刷机 |
 | [自制 App，自由用](ios-home-sideload/README.md) | 不付开发者年费，在多台自有 iPhone / iPad 上使用多个自制 App，让日常续签更简单。 | 设备 · 自制应用 |
 
 每个 skill 都有两个入口：**README.md 面向使用者**，介绍它能做什么、适合谁；**SKILL.md 面向 Agent**，提供执行流程和必要约束。
